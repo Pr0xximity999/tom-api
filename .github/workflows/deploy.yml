@@ -44,4 +44,4 @@ jobs:
             docker pull ${{ vars.DOCKER_USERNAME }}/tom-api:latest
             docker stop tom-api || true
             docker rm tom-api || true
-            docker run -d -p 1580:1580 --name tom-api ${{ vars.DOCKER_USERNAME }}/tom-api:latest
+            docker run -d -p 1580:1580 1581:1581 --name tom-api ${{ vars.DOCKER_USERNAME }}/tom-api:latest
