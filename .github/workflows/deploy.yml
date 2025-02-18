@@ -24,7 +24,7 @@ jobs:
           file: TomApi/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          target: final
+          target: release
           tags: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
 
       - name: Pull the image to VM
