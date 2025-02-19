@@ -44,4 +44,4 @@ jobs:
             docker pull ${{ vars.DOCKER_USERNAME }}/tom-api:latest
             docker stop tom-api || true
             docker rm tom-api || true
-            eval "docker run -d -p $(echo '${{vars.PUBLISH_PORTS}}' | sed 's/,/ -p /g' | sed 's/^/-p /') --name tom-api ${{ vars.DOCKER_USERNAME }}/tom-api:latest"
+            eval "docker run -d $(echo '${{vars.PUBLISH_PORTS}}' | sed 's/,/ -p /g' | sed 's/^/-p /') --name tom-api ${{ vars.DOCKER_USERNAME }}/tom-api:latest"
