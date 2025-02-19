@@ -29,6 +29,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//Connection attempt logging
+app.Use(async (context, next) =>
+{
+    var req = context.Request;
+    req.EnableBuffering();
+    Console.WriteLine("-----------------");
+    Console.WriteLine(DateTime.Now);
+    Console.WriteLine(req.Headers["X-Forwarded-For"]); // thanks nginx
+    Console.WriteLine($"Method:{req.Method}\nEndpoint:{req.Path} | {context.GetEndpoint()?.DisplayName}");
+    Console.WriteLine($"Authorization: {req.Headers.Authorization}");
+    Console.WriteLine($"Params: {string.Join("\n\t", req.Query.Select(q => $"{q.Key}={q.Value}"))}");
+    Console.WriteLine($"Body: {await new StreamReader(req.Body).ReadToEndAsync()}");
+    req.Body.Position = 0; //brother what the fuck
+    Console.WriteLine("-----------------");
+    await next.Invoke();
+});
+
 app.UseHttpsRedirection();
 
 app.MapGet("/", () => Results.Content(
