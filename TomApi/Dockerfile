@@ -1,6 +1,7 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS 1580
 EXPOSE 1580
 EXPOSE 1581
 
