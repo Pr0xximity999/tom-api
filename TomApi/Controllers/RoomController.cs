@@ -11,9 +11,9 @@ namespace TomApi.Controllers;
 public class RoomController : Controller
 {
     private ILogger<RoomController> _logger;
-    private IDatabaseObject<Room_2D> _roomData;
+    private IRoomData _roomData;
     
-    public RoomController(IDatabaseObject<Room_2D> roomData, ILogger<RoomController> logger)
+    public RoomController(IRoomData roomData, ILogger<RoomController> logger)
     {
         _logger = logger;
         _roomData = roomData;

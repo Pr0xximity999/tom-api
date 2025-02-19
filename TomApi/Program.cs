@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TomApi.Data;
 using TomApi.Interfaces;
 using TomApi.Models;
+using TomApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +12,22 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Logging.ClearProviders().AddConsole();
 
 //Add the data repositories to the controllers
-builder.Services.AddTransient<IDatabaseObject<Room_2D>, RoomData>();
+builder.Services.AddTransient<IRoomData, RoomData>();
+builder.Services.AddTransient<IDataService, MySqlDataService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequiredLength = 50;
+    })
+    .AddRoles<IdentityRole>()
+    .AddDapperStores(options =>
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("DapperIdentity");
+    });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -47,7 +61,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
-
+app.UseAuthorization();
 app.MapGet("/", () => Results.Content(
 @"<html>
 <img style='width=100%;height=100%;' src='https://i.imgur.com/QrgxarN.jpeg'>
