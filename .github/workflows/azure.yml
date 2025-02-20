@@ -37,7 +37,7 @@ jobs:
 
       - name: "Check if WEBAPI_PROJECT_NAME secret exists"
         env:
-          super_secret: ${{ secrets.WEBAPI_PROJECT_NAME }}
+          super_secret: ${{ vars.WEBAPI_PROJECT_NAME }}
         if: ${{ env.super_secret == '' }}
         run: 'echo "echo the secret \"WEBAPI_PROJECT_NAME\" has not been made; echo please go to \"settings \> Actions secrets and variables \> actions\" to create it"; exit 1;'
   
