@@ -64,6 +64,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapGet("/", () => Results.Content(
 @"<html>
+<head>
+    <meta property=""og:type"" content=""avans yourself!!!!"">
+    <meta property=""og:title"" content=""Title"">
+    <meta property=""og:description"" content=""Google, show me this guys balls"">
+    <meta property=""og:image"" content=""https://i.imgur.com/QrgxarN.jpeg"""">
+    <meta property=""og:image:width"" content=""400"">
+    <meta property=""og:image:height"" content=""400"">
+</head>
 <img style='width=100%;height=100%;' src='https://i.imgur.com/QrgxarN.jpeg'>
 </html>
 ","text/html"));
