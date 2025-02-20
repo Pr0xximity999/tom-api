@@ -7,6 +7,7 @@ using TomApi.Controllers;
 using TomApi.Data;
 using TomApi.Interfaces;
 using TomApi.Models;
+using TomApi.Services;
 
 namespace TomApi.Tests;
 
@@ -18,13 +19,13 @@ public class RoomDataTests
     {
         //Arrange
         Room_2D room = generateRoom2D();
-        
-        Mock<IConfiguration> config = new();
+        bool success = true;
         Mock<ILogger<RoomController>> logger = new();
-        Mock<RoomData> roomData = new(config.Object);
+        Mock<IRoomData> roomData = new();
         
+        roomData.Setup(x => x.Write(room)).Returns(success);
         var roomController = new RoomController(roomData.Object, logger.Object);
-       
+        
         //Act
         var response = roomController.Write(room);
        
@@ -35,15 +36,13 @@ public class RoomDataTests
     [TestMethod]
     public void Read_ReadRoomAtId_NotFound()
     {
-        //There is a 1 in 5.32x10^36 that this fails
         
         //Arrange
         string roomId = Guid.NewGuid().ToString();
-        Room_2D room = new Room_2D();
-        
-        Mock<IConfiguration> config = new();
+        Room_2D? room2D = null;
         Mock<ILogger<RoomController>> logger = new();
-        Mock<RoomData> roomData = new(config.Object);
+        Mock<IRoomData> roomData = new();
+        roomData.Setup(x => x.Read(roomId)).Throws(new Exception("No object with such id"));
         
        var roomController = new RoomController(roomData.Object, logger.Object);
        
