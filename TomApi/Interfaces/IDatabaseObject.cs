@@ -6,9 +6,9 @@ public interface IDatabaseObject<T>
 {
     public IEnumerable<T> ReadAll();
 
-    public Room_2D Read(string id);
+    public T Read(string id);
 
-    public bool Write(T room);
+    public bool Write(T object2D);
 
     public bool Delete(string id);
 
