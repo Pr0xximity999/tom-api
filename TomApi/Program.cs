@@ -27,7 +27,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
     {
-        options.ConnectionString = builder.Configuration.GetConnectionString("DapperIdentity");
+        options.ConnectionString = builder.Configuration.GetConnectionString("azure");
     });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
@@ -64,6 +64,8 @@ app.Use(async (context, next) =>
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapGroup("/account").MapIdentityApi<IdentityUser>();
+
+//Embed image and landing page
 app.MapGet("/", () => Results.Content(
 @"<html>
 <head>
@@ -77,6 +79,18 @@ app.MapGet("/", () => Results.Content(
 <img style='width=100%;height=100%;' src='https://i.imgur.com/QrgxarN.jpeg'>
 </html>
 ","text/html"));
+
+app.MapPost("/account/logout",
+    async (SignInManager<IdentityUser> signinManager, [FromBody] object empty) =>
+    {
+        if (empty != null)
+        {
+            await signinManager.SignOutAsync();
+            return Results.Ok();
+        }
+        return Results.Unauthorized();
+    }).RequireAuthorization();
+
 app.MapControllers();
 app.Run();
 
