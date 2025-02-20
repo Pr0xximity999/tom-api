@@ -51,12 +51,12 @@ app.Use(async (context, next) =>
     req.EnableBuffering();
     Console.WriteLine("-----------------");
     Console.WriteLine(DateTime.Now);
-    Console.WriteLine(req.Headers["X-Forwarded-For"]); // thanks nginx
+    Console.WriteLine(req.HttpContext.Connection.RemoteIpAddress);
     Console.WriteLine($"Method:{req.Method}\nEndpoint:{req.Path} | {context.GetEndpoint()?.DisplayName}");
     Console.WriteLine($"Authorization: {req.Headers.Authorization}");
     Console.WriteLine($"Params: {string.Join("\n\t", req.Query.Select(q => $"{q.Key}={q.Value}"))}");
     Console.WriteLine($"Body: {await new StreamReader(req.Body).ReadToEndAsync()}");
-    req.Body.Position = 0; //brother what the fuck
+    req.Body.Position = 0;
     Console.WriteLine("-----------------");
     await next.Invoke();
 });
