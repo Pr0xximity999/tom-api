@@ -13,7 +13,8 @@ builder.Logging.ClearProviders().AddConsole();
 
 //Add the data repositories to the controllers
 builder.Services.AddTransient<IRoomData, RoomData>();
-builder.Services.AddTransient<IDataService, MySqlDataService>();
+builder.Services.AddTransient<IObjectData, ObjectData>();
+builder.Services.AddTransient<IDataService, AzureDataService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -62,6 +63,7 @@ app.Use(async (context, next) =>
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 app.MapGet("/", () => Results.Content(
 @"<html>
 <head>
