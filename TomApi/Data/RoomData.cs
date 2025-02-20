@@ -1,22 +1,19 @@
-using Dapper;
 using TomApi.Interfaces;
 using TomApi.Models;
-using MySql.Data.MySqlClient;
-using TomApi.Services;
 
 namespace TomApi.Data;
 
 public class RoomData : IRoomData
 {
-    private const string TABLE = "Room_2D";
-    private IDataService _dataService;
-    public RoomData(IDataService dataService, IConfiguration config)
+    private const string Table = "Room_2D";
+    private readonly IDataService _dataService;
+    public RoomData(IDataService dataService)
     {
         _dataService = dataService;
     }
     public IEnumerable<Room_2D> ReadAll()
     {
-        string query = @$"SELECT * FROM {TABLE}";
+        string query = @$"SELECT * FROM {Table}";
         List<Room_2D> result = _dataService.QuerySql<Room_2D>(query).ToList();
         return result;
     }
@@ -24,7 +21,7 @@ public class RoomData : IRoomData
     public Room_2D Read(string id)
     {
         string query = 
-@$"SELECT * FROM {TABLE}
+@$"SELECT * FROM {Table}
 WHERE `id` = @Id";
         
         //Throw exception if no item found
@@ -32,20 +29,20 @@ WHERE `id` = @Id";
         return result;
     }
 
-    public bool Write(Room_2D room)
+    public bool Write(Room_2D object2D)
     {
         string query =
-$@"INSERT  INTO {TABLE}
+$@"INSERT  INTO {Table}
 (`Id`, `User_Id`, `Name`, `MaxLength`, `MaxHeight`)
 VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight)";
 
         bool result = _dataService.ExecuteSql(query, new
         {
-            Id = room.Id,
-            User_Id = room.User_Id,
-            Name = room.Name,
-            Maxlength = room.MaxLength,
-            MaxHeight = room.MaxHeight
+            object2D.Id,
+            object2D.User_Id,
+            object2D.Name,
+            object2D.MaxLength,
+            object2D.MaxHeight
         });
         
         if (!result) throw new("Writing object to table resulted in nothing happening");
@@ -56,12 +53,12 @@ VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight)";
     public bool Delete(string id)
     {
         string query =
-$@"DELETE FROM {TABLE}
+$@"DELETE FROM {Table}
 where `Id` = @Id";
 
         bool result = _dataService.ExecuteSql(query, new { Id = id });
         
-        if (!result) throw new("Deleting object fromt table resulted in nothing happening");
+        if (!result) throw new("Deleting object from table resulted in nothing happening");
 
         return result;
     }

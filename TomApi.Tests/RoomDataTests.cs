@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TomApi.Controllers;
-using TomApi.Data;
 using TomApi.Interfaces;
 using TomApi.Models;
-using TomApi.Services;
 
 namespace TomApi.Tests;
 
@@ -18,12 +14,14 @@ public class RoomDataTests
     public void Create_WriteRoom_Success()
     {
         //Arrange
-        Room_2D room = generateRoom2D();
+        Room_2D room = GenerateRoom2D();
         bool success = true;
         Mock<ILogger<RoomController>> logger = new();
         Mock<IRoomData> roomData = new();
         
+        //Simulate the datalayer succeeding
         roomData.Setup(x => x.Write(room)).Returns(success);
+        
         var roomController = new RoomController(roomData.Object, logger.Object);
         
         //Act
@@ -39,9 +37,10 @@ public class RoomDataTests
         
         //Arrange
         string roomId = Guid.NewGuid().ToString();
-        Room_2D? room2D = null;
         Mock<ILogger<RoomController>> logger = new();
         Mock<IRoomData> roomData = new();
+        
+        //Simulate the datalayer failing because no object was found
         roomData.Setup(x => x.Read(roomId)).Throws(new Exception("No object with such id"));
         
        var roomController = new RoomController(roomData.Object, logger.Object);
@@ -53,7 +52,7 @@ public class RoomDataTests
        Assert.IsInstanceOfType(response, out BadRequestObjectResult _);
     }
 
-    private Room_2D generateRoom2D()
+    private Room_2D GenerateRoom2D()
     {
         Random random = new();
         return new Room_2D

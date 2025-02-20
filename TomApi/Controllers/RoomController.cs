@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TomApi.Data;
@@ -7,6 +8,7 @@ using TomApi.Models;
 namespace TomApi.Controllers;
 
 [Controller]
+[Authorize]
 [Route("[controller]/")]
 public class RoomController : Controller
 {
