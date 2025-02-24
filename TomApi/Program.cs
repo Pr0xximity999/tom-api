@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TomApi.Data;
 using TomApi.Interfaces;
-using TomApi.Models;
 using TomApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add config support and logging
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Logging.ClearProviders().AddConsole();
+
+//Adding http content accessor to access user claims
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 
 //Add the data repositories to the controllers
 builder.Services.AddTransient<IRoomData, RoomData>();

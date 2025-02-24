@@ -14,13 +14,15 @@ public class RoomController : Controller
 {
     private ILogger<RoomController> _logger;
     private IRoomData _roomData;
+    private IAuthenticationService _authService;
     
-    public RoomController(IRoomData roomData, ILogger<RoomController> logger)
+    public RoomController(IRoomData roomData, ILogger<RoomController> logger, IAuthenticationService authService)
     {
         _logger = logger;
+        _authService = authService;
         _roomData = roomData;
     }
-    
+
     [HttpGet("all")]
     public IActionResult ReadAll()
     {
