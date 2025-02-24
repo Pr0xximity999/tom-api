@@ -36,14 +36,7 @@ $@"INSERT  INTO {Table}
 (`Id`, `User_Id`, `Name`, `MaxLength`, `MaxHeight`)
 VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight)";
 
-        bool result = _dataService.ExecuteSql(query, new
-        {
-            object2D.Id,
-            object2D.User_Id,
-            object2D.Name,
-            object2D.MaxLength,
-            object2D.MaxHeight
-        });
+        bool result = _dataService.ExecuteSql(query, object2D);
         
         if (!result) throw new("Writing object to table resulted in nothing happening");
 

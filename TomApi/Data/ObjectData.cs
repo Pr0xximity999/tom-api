@@ -37,17 +37,7 @@ WHERE `id` = @Id";
 (`Id`, `Room2D_Id`, `Prefab_Id`, `PositionX`, `PositionY`, `ScaleX`, `ScaleY`, `RotationZ`)
 VALUES(@Id, @Room2D_Id, @Prefab_Id, @PositionX, @PositionY, @ScaleX, @ScaleY, @RotationZ)";
 
-        bool result = _dataService.ExecuteSql(query, new
-        {
-            object2D.Id,
-            object2D.Room2D_Id,
-            object2D.Prefab_Id,
-            object2D.PositionX,
-            object2D.PositionY,
-            object2D.ScaleX,
-            object2D.ScaleY,
-            object2D.RotationZ
-        });
+        bool result = _dataService.ExecuteSql(query, object2D);
         
         if (!result) throw new("Writing object to table resulted in nothing happening");
 
