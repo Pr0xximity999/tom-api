@@ -8,7 +8,6 @@ using TomApi.Models;
 namespace TomApi.Controllers;
 
 [Controller]
-[Authorize]
 [Route("[controller]/")]
 public class RoomController : Controller
 {

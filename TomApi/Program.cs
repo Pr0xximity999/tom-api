@@ -17,7 +17,7 @@ builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 //Add the data repositories to the controllers
 builder.Services.AddTransient<IRoomData, RoomData>();
 builder.Services.AddTransient<IObjectData, ObjectData>();
-builder.Services.AddTransient<IDataService, AzureDataService>();
+builder.Services.AddTransient<IDataService, MySqlDataService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -25,12 +25,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     {
         options.User.RequireUniqueEmail = true;
-        options.Password.RequiredLength = 50;
+        options.Password.RequiredLength = 10;
     })
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
     {
-        options.ConnectionString = builder.Configuration.GetConnectionString("azure");
+        options.ConnectionString = builder.Configuration.GetConnectionString("Maria");
     });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
