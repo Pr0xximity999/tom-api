@@ -20,21 +20,24 @@ public class MySqlDataService : IDataService
 
     public IEnumerable<T> QuerySql<T>(string query, object? parameters=null)
     {
-        using var connection = new MySqlConnection(_config.GetConnectionString(CONN) ?? "");
+        using var connection = CreateMySqlConnection();
         IEnumerable<T> result = connection.Query<T>(query, parameters);
 
         return result;
     }
     
-    
     public T QueryFirstSql<T>(string query, object? parameters = null) => QuerySql<T>(query, parameters).First();
-    
     
     public bool ExecuteSql(string query, object? parameters=null)
     {
-        using var connection = new MySqlConnection(_config.GetConnectionString(CONN) ?? "");
+        using var connection = CreateMySqlConnection();
         bool result = connection.Execute(query, parameters) > 0;
 
         return result;
+    }
+
+    private MySqlConnection CreateMySqlConnection()
+    {
+        return new MySqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MYSQL") ?? _config.GetConnectionString(CONN) ?? "");
     }
 }
