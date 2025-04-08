@@ -30,7 +30,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
     {
-        options.ConnectionString = builder.Configuration.GetConnectionString("Maria");
+        options.ConnectionString = builder.Configuration.GetConnectionString("mssql");
     });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();

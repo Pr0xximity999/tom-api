@@ -27,7 +27,7 @@ public class RoomDataTests
         var response = roomController.Write(room);
        
         //Assert
-        Assert.IsInstanceOfType(response, out OkObjectResult _);
+        Assert.IsInstanceOfType(response, typeof(OkObjectResult));
     }
     
     [TestMethod]
@@ -44,10 +44,10 @@ public class RoomDataTests
        var roomController = GenerateController(roomData: roomData);
        
        //Act
-       var response = roomController.Read(roomId);
+       var response = roomController.Read(roomId);    
        
        //Assert
-       Assert.IsInstanceOfType(response, out BadRequestObjectResult _);
+       Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
     }
 
     /// <summary>

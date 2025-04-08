@@ -7,7 +7,7 @@ namespace TomApi.Services;
 public class SqlDataService : IDataService
 {
     private IConfiguration _config;
-    private const string CONN = "azure";
+    private const string CONN = "mssql";
     public SqlDataService(IConfiguration config)
     {
         _config = config;
