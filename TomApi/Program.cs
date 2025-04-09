@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TomApi.Data;
@@ -30,7 +31,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
     {
-        options.ConnectionString = builder.Configuration.GetConnectionString("mssql");
+        options.ConnectionString = Environment.GetEnvironmentVariable("CONNECTIONSTRING_AZURE") ?? builder.Configuration.GetConnectionString("azure");
     });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
@@ -93,7 +94,8 @@ app.MapPost("/account/logout",
         }
         return Results.Unauthorized();
     }).RequireAuthorization();
-
+app.MapGet("/account/checkAccessToken", [Authorize] () => Results.Content("{\"authorized\": true}", "application/json"));
+app.MapGet("/account/id", [Authorize] (IAuthenticationService auth) => auth.GetCurrentUserId());
 app.MapControllers();
 app.Run();
 
