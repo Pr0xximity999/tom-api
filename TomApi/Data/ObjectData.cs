@@ -44,6 +44,11 @@ VALUES(@Id, @Room2D_Id, @Prefab_Id, @PositionX, @PositionY, @ScaleX, @ScaleY, @R
         return result;
     }
 
+    public bool Update(Object_2D object2D)
+    {
+        throw new NotImplementedException();
+    }
+
     public bool Delete(string id)
     {
         string query =

@@ -17,15 +17,34 @@ public class RoomData : IRoomData
         List<Room_2D> result = _dataService.QuerySql<Room_2D>(query).ToList();
         return result;
     }
+    
+    public IEnumerable<Room_2D> ReadByUserId(string id)
+    {
+        string query = @$"SELECT * FROM {Table}
+WHERE `User_ID` = @id";
+        List<Room_2D> result = _dataService.QuerySql<Room_2D>(query, new{id = id}).ToList();
+        return result;
+    }
 
-    public Room_2D Read(string id)
+    public Room_2D? ReadByName(string name)
+    {
+        string query = 
+            @$"SELECT * FROM {Table}
+WHERE `name` = @Name";
+        
+        //Throw exception if no item found
+        Room_2D? result = _dataService.QuerySql<Room_2D>(query, new { Name = name }).FirstOrDefault();
+        return result;
+    }
+
+    public Room_2D? Read(string id)
     {
         string query = 
 @$"SELECT * FROM {Table}
 WHERE `id` = @Id";
         
         //Throw exception if no item found
-        Room_2D result = _dataService.QuerySql<Room_2D>(query, new {Id = id}).FirstOrDefault() ?? throw new("No object with such id");
+        Room_2D? result = _dataService.QuerySql<Room_2D>(query, new { Id = id }).FirstOrDefault();
         return result;
     }
 
@@ -33,14 +52,17 @@ WHERE `id` = @Id";
     {
         string query =
 $@"INSERT  INTO {Table}
-(`Id`, `User_Id`, `Name`, `MaxLength`, `MaxHeight`)
-VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight)";
+(`Id`, `User_Id`, `Name`, `MaxLength`, `MaxHeight`, `Position`)
+VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight, @Position)";
 
         bool result = _dataService.ExecuteSql(query, object2D);
-        
-        if (!result) throw new("Writing object to table resulted in nothing happening");
 
         return result;
+    }
+
+    public bool Update(Room_2D object2D)
+    {
+        throw new NotImplementedException();
     }
 
     public bool Delete(string id)
@@ -50,11 +72,7 @@ $@"DELETE FROM {Table}
 where `Id` = @Id";
 
         bool result = _dataService.ExecuteSql(query, new { Id = id });
-        
-        if (!result) throw new("Deleting object from table resulted in nothing happening");
 
         return result;
     }
-    
-    
 }
