@@ -6,6 +6,10 @@ on:
       - main
 
 jobs:
+  unit-test:
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+  
   build:
     runs-on: ubuntu-latest
     steps:
