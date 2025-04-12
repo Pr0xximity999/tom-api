@@ -6,5 +6,5 @@ public interface IAuthenticationService
     /// Returns the name of the authenticated user
     /// </summary>
     /// <returns></returns>
-    string? GetCurrentUserId();
+    string GetCurrentUserId();
 }

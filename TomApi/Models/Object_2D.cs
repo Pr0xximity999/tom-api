@@ -4,7 +4,7 @@ namespace TomApi.Models;
 public class Object_2D
 {
     [Key]
-    public string Id { get; set; }
+    public string? Id { get; set; }
     
     [Required]
     public string Room2D_Id { get; set; }
