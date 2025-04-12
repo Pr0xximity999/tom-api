@@ -31,7 +31,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddDapperStores(options =>
     {
-        options.ConnectionString = Environment.GetEnvironmentVariable("CONNECTIONSTRING_AZURE") ?? builder.Configuration.GetConnectionString("azure");
+        options.ConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING_SQL") ?? builder.Configuration.GetConnectionString("azure");
     });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
