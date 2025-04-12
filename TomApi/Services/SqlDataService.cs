@@ -33,6 +33,6 @@ public class SqlDataService : IDataService
     
     private SqlConnection CreateMySqlConnection()
     {
-        return new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_SQL") ?? _config.GetConnectionString(CONN) ?? "");
+        return new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MYSQL") ?? _config.GetConnectionString(CONN) ?? "");
     }
 }
