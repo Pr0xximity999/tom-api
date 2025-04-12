@@ -145,9 +145,15 @@ public class RoomController : Controller
             //Assign user id to the room object
             room.User_Id = _authService.GetCurrentUserId() ?? throw new("UserId not found");
             
+            //Check if the room's name is not too long or too short
+            if (room.Name.Length is < 1 or > 25)
+                throw new Exception($"Room name must be between 1 and 25 characters: got {room.Name.Length}");
+            
+            //Chck if the room is not too big or too small
             if (room.MaxLength is < 20 or > 200 || room.MaxHeight is < 10 or > 100)
                 throw new Exception($"Room size too big or too small: ({room.MaxLength}, {room.MaxHeight})");
 
+            //Check if the room position isn't out of range
             if (room.position is < 0 or > 4) throw new("Room position must be an int between 0 and 5 (inclusive)");
             
             //Check if the room name already exists

@@ -11,15 +11,60 @@ namespace TomApi.Tests;
 [TestClass]
 public class RoomDataTests
 {
+    
+    //Writing tests
     [TestMethod]
     public void Create_WriteRoom_Success()
     {
         //Arrange
         var room = GenerateRoom(lenght: 50, height: 60, position:3);
+        var roomController = GenerateRoomController(out _, out _, inputRoom:room, outputUserId:Guid.NewGuid().ToString(), outputBoolean:true);
+        
+        //Act
+        var response = roomController.Write(room);
+       
+        //Assert
+        Assert.IsInstanceOfType(response, typeof(OkObjectResult));
+    }
+    
+    [TestMethod]
+    public void Create_WriteRoom_NameTooLong()
+    {
+        //Arrange
+        var room = GenerateRoom(name:"1234567890111416182022242627", lenght: 50, height: 60, position:3);
         var roomController = GenerateRoomController(out _, out _, inputRoom:room, outputBoolean:true);
         
         //Act
         var response = roomController.Write(room);
+       
+        //Assert
+        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
+    }
+    
+    [TestMethod]
+    public void Create_WriteRoom_NameExists()
+    {
+        //Arrange
+        var room1 = GenerateRoom(name:"name", lenght: 50, height: 60, position:3);
+        var room2 = GenerateRoom(name:"name", lenght: 30, height: 10, position:2);
+        var roomController = GenerateRoomController(out _, out _, inputRoom:room1, outputRoom:room2);
+        
+        //Act
+        var response = roomController.Write(room1);
+       
+        //Assert
+        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
+    }
+    
+    //Reading tests
+    [TestMethod]
+    public void Read_ReadRoomAtId_Success()
+    {
+        //Arrange
+        var roomController = GenerateRoomController(out var id, out _, outputRoom:GenerateRoom());
+       
+        //Act
+        var response = roomController.Read(id);    
        
         //Assert
         Assert.IsInstanceOfType(response, typeof(OkObjectResult));
@@ -38,6 +83,18 @@ public class RoomDataTests
        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
     }
     
+    [TestMethod]
+    public void Read_ReadRoomAtId_IdNotValid()
+    {
+        //Arrange
+        var roomController = GenerateRoomController(out var id, out _, inputId:"invalid");
+       
+        //Act
+        var response = roomController.Read(id);    
+       
+        //Assert
+        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
+    }
     /// <summary>
     /// Generates a room with random properties
     /// </summary>
@@ -56,7 +113,7 @@ public class RoomDataTests
         };
     }
     
-        /// <summary>
+    /// <summary>
     /// Generates a post setup room controller,
     /// use GenerateEmptyRoomController If you want to tweak the constructor data.
     /// Use the output room if you want to be able to get true back from a mocked method using the room as parameter
@@ -94,7 +151,7 @@ public class RoomDataTests
         roomData.Setup(x => x.Delete(inputId)).Returns(outputBoolean);
         
         //Create controller
-        return GenerateEmptyRoomController(roomData: roomData);
+        return GenerateEmptyRoomController(roomData: roomData, auth:auth);
     }    
     
     
