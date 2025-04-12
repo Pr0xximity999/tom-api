@@ -48,21 +48,27 @@ WHERE `id` = @Id";
         return result;
     }
 
-    public bool Write(Room_2D object2D)
+    public bool Write(Room_2D room2D)
     {
         string query =
 $@"INSERT  INTO {Table}
 (`Id`, `User_Id`, `Name`, `MaxLength`, `MaxHeight`, `Position`)
 VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight, @Position)";
 
-        bool result = _dataService.ExecuteSql(query, object2D);
+        bool result = _dataService.ExecuteSql(query, room2D);
 
         return result;
     }
 
-    public bool Update(Room_2D object2D)
+    public bool Update(Room_2D room2D)
     {
-        throw new NotImplementedException();
+        string query = @$"UPDATE {Table}
+SET
+Name = @Name, 
+WHERE [Id] = @Id";
+        var result = _dataService.ExecuteSql(query, room2D);
+        
+        return result;
     }
 
     public bool Delete(string id)

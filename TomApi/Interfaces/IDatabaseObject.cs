@@ -8,10 +8,8 @@ public interface IDatabaseObject<T>
 
     public T? Read(string id);
 
-    public bool Write(T object2D);
-
-    public bool Update(T object2D);
-
+    public bool Write(T room2D);
+    
     public bool Delete(string id);
 
 

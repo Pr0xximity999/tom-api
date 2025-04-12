@@ -30,23 +30,18 @@ WHERE `id` = @Id";
         return result;
     }
 
-    public bool Write(Object_2D object2D)
+    public bool Write(Object_2D room2D)
     {
         string query =
             $@"INSERT  INTO {Table}
 (`Id`, `Room2D_Id`, `Prefab_Id`, `PositionX`, `PositionY`, `ScaleX`, `ScaleY`, `RotationZ`)
 VALUES(@Id, @Room2D_Id, @Prefab_Id, @PositionX, @PositionY, @ScaleX, @ScaleY, @RotationZ)";
 
-        bool result = _dataService.ExecuteSql(query, object2D);
+        bool result = _dataService.ExecuteSql(query, room2D);
         
         if (!result) throw new("Writing object to table resulted in nothing happening");
 
         return result;
-    }
-
-    public bool Update(Object_2D object2D)
-    {
-        throw new NotImplementedException();
     }
 
     public bool Delete(string id)
@@ -56,8 +51,24 @@ VALUES(@Id, @Room2D_Id, @Prefab_Id, @PositionX, @PositionY, @ScaleX, @ScaleY, @R
 where `Id` = @Id";
 
         bool result = _dataService.ExecuteSql(query, new { Id = id });
-        
-        if (!result) throw new("Deleting object from table resulted in nothing happening");
+
+        return result;
+    }
+
+    public IEnumerable<Object_2D> Parent(string id)
+    {
+        string query = $"SELECT * FROM {Table} WHERE `Room2D_Id` = @id";
+        IEnumerable<Object_2D> result = _dataService.QuerySql<Object_2D>(query, new {id});
+        return result;
+    }
+
+    public bool RemoveByRoom(string roomId)
+    {
+        string query =
+            $@"DELETE FROM {Table}
+where `Room2D_Id` = @roomId";
+
+        bool result = _dataService.ExecuteSql(query, new { roomId });
 
         return result;
     }
