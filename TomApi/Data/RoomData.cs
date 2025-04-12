@@ -60,17 +60,6 @@ VALUES(@Id, @User_Id, @Name, @MaxLength, @MaxHeight, @Position)";
         return result;
     }
 
-    public bool Update(Room_2D room2D)
-    {
-        string query = @$"UPDATE {Table}
-SET
-Name = @Name, 
-WHERE [Id] = @Id";
-        var result = _dataService.ExecuteSql(query, room2D);
-        
-        return result;
-    }
-
     public bool Delete(string id)
     {
         string query =
