@@ -143,7 +143,10 @@ public class RoomController : Controller
             room.Id = Guid.NewGuid().ToString();
             
             //Assign user id to the room object
-            room.User_Id = _authService.GetCurrentUserId();
+            room.User_Id = _authService.GetCurrentUserId() ?? throw new("UserId not found");
+            
+            if (room.MaxLength is < 20 or > 200 || room.MaxHeight is < 10 or > 100)
+                throw new Exception($"Room size too big or too small: ({room.MaxLength}, {room.MaxHeight})");
 
             if (room.position is < 0 or > 4) throw new("Room position must be an int between 0 and 5 (inclusive)");
             
@@ -177,31 +180,6 @@ public class RoomController : Controller
             return BadRequest("oopsie");
         }
     }   
-    
-    [HttpPut]
-    public IActionResult Update([FromBody] Room_2D room)
-    {
-        try
-        {
-            //Validate guid
-            if(!Guid.TryParse(room.Id, out _))  throw new($"Id not valid guid: {room.Id}");
-                
-            //Check if the procedure id doesn't exist
-            if (!IdExists(room.Id)) throw new("Room with this id doesn't exist");
-                
-            //Check if updating to table succeeded
-            var result = _roomData.Update(room);
-            if (!result) throw new("Updating procedure to table resulted in nothing happening");
-                
-            //Return result
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message + "\n" + e.InnerException);
-            return BadRequest();
-        }
-    }  
     
     [HttpDelete("{id}")]
     public IActionResult Delete(string id)
