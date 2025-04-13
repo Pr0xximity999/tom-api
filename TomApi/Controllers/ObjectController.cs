@@ -44,12 +44,32 @@ public class ObjectController : Controller
     {
         try
         {
+            if(!Guid.TryParse(id, out _)) throw new($"id not a valid guid: {id}");
+            
             var object2D = _objectData.Read(id);
 
             //If not found
             if (object2D == null) throw new("Reading object by id resulted in none found");
                 
             return Ok(object2D);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message + "\n" + e.InnerException);
+            return BadRequest("oopsie");
+        }
+    }
+    
+    [HttpGet("parent/{roomId}")]
+    public IActionResult Parent(string roomId)
+    {
+        try
+        {
+            if(!Guid.TryParse(roomId, out _)) throw new($"id not a valid guid: {roomId}");
+
+            var object2Ds = _objectData.Parent(roomId);
+                
+            return Ok(object2Ds);
         }
         catch (Exception e)
         {
