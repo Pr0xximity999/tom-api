@@ -59,41 +59,7 @@ public class RoomController : Controller
             _logger.LogError(e.Message + "\n" + e.InnerException);
             return BadRequest("oopsie");
         }
-    }    
-    
-    [HttpGet("name/{name}")]
-    public IActionResult ReadByName(string name)
-    {
-        try
-        {
-            //Get all the rooms available to this user
-            var room = _roomData.ReadByName(name);
-
-            if (room == null) throw new("Reading room by name resulted in null list");
-            
-            //Change spaces to underscores
-            var newName = "";
-            foreach (var character in room.Name)
-            {
-                if (character == '_')
-                {
-                    newName += " ";
-                    continue;
-                }
-
-                newName += character;
-            }
-            room.Name = newName;
-            room.objects = _objectData.Parent(room.Id!).ToList();
-
-            return Ok(room);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message + "\n" + e.InnerException);
-            return BadRequest("oopsie");
-        }
-    }
+    }  
 
     [HttpGet("{id}")]
     public IActionResult Read(string id)
