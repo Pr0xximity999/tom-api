@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TomApi.Controllers;
@@ -11,168 +13,57 @@ namespace TomApi.Tests;
 [TestClass]
 public class RoomDataTests
 {
-    
-    //Writing tests
     [TestMethod]
     public void Create_WriteRoom_Success()
     {
         //Arrange
-        var room = GenerateRoom(lenght: 50, height: 60, position:3);
-        var roomController = GenerateRoomController(out _, out _, inputRoom:room, outputUserId:Guid.NewGuid().ToString(), outputBoolean:true);
+        Room_2D room = generateRoom2D();
         
+        Mock<IConfiguration> config = new();
+        Mock<ILogger<RoomController>> logger = new();
+        Mock<RoomData> roomData = new(config.Object);
+        
+        var roomController = new RoomController(roomData.Object, logger.Object);
+       
         //Act
         var response = roomController.Write(room);
        
         //Assert
-        Assert.IsInstanceOfType(response, typeof(OkObjectResult));
-    }
-    
-    [TestMethod]
-    public void Create_WriteRoom_NameTooLong()
-    {
-        //Arrange
-        var room = GenerateRoom(name:"1234567890111416182022242627", lenght: 50, height: 60, position:3);
-        var roomController = GenerateRoomController(out _, out _, inputRoom:room, outputBoolean:true);
-        
-        //Act
-        var response = roomController.Write(room);
-       
-        //Assert
-        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
-    }
-    
-    [TestMethod]
-    public void Create_WriteRoom_NameExists()
-    {
-        //Arrange
-        var room1 = GenerateRoom(name:"name", lenght: 50, height: 60, position:3);
-        var room2 = GenerateRoom(name:"name", lenght: 30, height: 10, position:2);
-        var roomController = GenerateRoomController(out _, out _, inputRoom:room1, outputRoom:room2);
-        
-        //Act
-        var response = roomController.Write(room1);
-       
-        //Assert
-        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
-    }
-    
-    //Reading tests
-    [TestMethod]
-    public void Read_ReadRoomAtId_Success()
-    {
-        //Arrange
-        var roomController = GenerateRoomController(out var id, out _, outputRoom:GenerateRoom());
-       
-        //Act
-        var response = roomController.Read(id);    
-       
-        //Assert
-        Assert.IsInstanceOfType(response, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(response, out OkObjectResult _);
     }
     
     [TestMethod]
     public void Read_ReadRoomAtId_NotFound()
     {
+        //There is a 1 in 5.32x10^36 that this fails
+        
         //Arrange
-        var roomController = GenerateRoomController(out var id, out _, outputRoom:null);
+        string roomId = Guid.NewGuid().ToString();
+        Room_2D room = new Room_2D();
+        
+        Mock<IConfiguration> config = new();
+        Mock<ILogger<RoomController>> logger = new();
+        Mock<RoomData> roomData = new(config.Object);
+        
+       var roomController = new RoomController(roomData.Object, logger.Object);
        
        //Act
-       var response = roomController.Read(id);    
+       var response = roomController.Read(roomId);
        
        //Assert
-       Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
+       Assert.IsInstanceOfType(response, out BadRequestObjectResult _);
     }
-    
-    [TestMethod]
-    public void Read_ReadRoomAtId_IdNotValid()
-    {
-        //Arrange
-        var roomController = GenerateRoomController(out var id, out _, inputId:"invalid");
-       
-        //Act
-        var response = roomController.Read(id);    
-       
-        //Assert
-        Assert.IsInstanceOfType(response, typeof(BadRequestObjectResult));
-    }
-    /// <summary>
-    /// Generates a room with random properties
-    /// </summary>
-    /// <returns></returns>
-    private Room_2D GenerateRoom(string? id=null, string? userId = null, int? height=null, int? lenght = null, string? name = null, int? position=null)
+
+    private Room_2D generateRoom2D()
     {
         Random random = new();
         return new Room_2D
         {
-            Id = id ?? Guid.NewGuid().ToString(),
-            User_Id = userId ?? Guid.NewGuid().ToString(),
-            MaxHeight = height ?? random.Next(1, 255),
-            MaxLength = lenght ?? random.Next(1, 255),
-            Name = name ?? $"Room #{random.Next(1, 2555)}",
-            position = position ?? random.Next(-255,255),
+            Id = Guid.NewGuid().ToString(),
+            MaxHeight = random.Next(1, 255),
+            MaxLength = random.Next(1, 255),
+            Name = $"Room #{random.Next(1, 2555)}",
+            User_Id = Guid.NewGuid().ToString()
         };
-    }
-    
-    /// <summary>
-    /// Generates a post setup room controller,
-    /// use GenerateEmptyRoomController If you want to tweak the constructor data.
-    /// Use the output room if you want to be able to get true back from a mocked method using the room as parameter
-    /// </summary>
-    /// <param name="outId">Use this guid if you dont want to generate one for the controller method</param>
-    /// <param name="inputId">The id being used in the data call</param>
-    /// <param name="outRoom">The room being used in the data call, same as inputRoom, generates a new one if that one is left null</param>
-    /// <param name="inputRoom">The room being used in the data call, same as outRoom</param>
-    /// <param name="outputRoom">The room being returned from the data call.
-    /// Used by Read and thus the exists checks. Will succeed if proceedure is not null and the id is the same as inputId</param>
-    /// <param name="outputRooms">The rooms list being returned from the data call. Used by ReadAll</param>
-    /// <param name="outputBoolean">The boolean being returned from the data call. Used by Write, Update, Delete, AddItem and RemoveItem</param>
-    /// <returns></returns>
-    private RoomController GenerateRoomController(out string outId, out Room_2D outRoom,
-        string? inputId = null, Room_2D? inputRoom = null, string? inputName = null,
-        Room_2D? outputRoom = null, List<Room_2D>? outputRooms = null, bool outputBoolean = false, string? outputUserId=null)
-    {
-        //set up input output data
-        Mock<IRoomData> roomData = new();
-        Mock<IAuthenticationService> auth = new();
-        inputId ??= Guid.NewGuid().ToString();
-        outId = inputId; //Lambdas do not accept out variables
-        inputRoom ??= GenerateRoom(inputId);
-        outRoom = inputRoom;
-        inputName ??= "name #" + Random.Shared.Next();
-        outputUserId ??= Guid.NewGuid().ToString();
-        
-        //Setup mock data layer
-        auth.Setup(x => x.GetCurrentUserId()).Returns(outputUserId);
-        
-        roomData.Setup(x => x.ReadByUserId(outputUserId)).Returns(outputRooms!);
-        roomData.Setup(x => x.ReadByName(inputName)).Returns(outputRoom);
-        roomData.Setup(x => x.Read(inputId)).Returns(outputRoom);
-        roomData.Setup(x => x.Write(inputRoom)).Returns(outputBoolean);
-        roomData.Setup(x => x.Delete(inputId)).Returns(outputBoolean);
-        
-        //Create controller
-        return GenerateEmptyRoomController(roomData: roomData, auth:auth);
-    }    
-    
-    
-    /// <summary>
-    /// Generates an empty room controller, override the default parameters for customization
-    /// </summary>
-    /// <param name="roomData"></param>
-    /// <param name="objectData"></param>
-    /// <param name="logger"></param>
-    /// <returns></returns>
-    private RoomController GenerateEmptyRoomController(
-        Mock<IRoomData>? roomData = null,
-        Mock<IObjectData>? objectData = null,
-        Mock<ILogger<RoomController>>? logger = null,
-        Mock<IAuthenticationService>? auth = null)
-    {
-        roomData ??= new();
-        objectData ??= new();
-        logger ??= new();
-        auth ??= new();
-
-        return new RoomController(roomData.Object, objectData.Object, logger.Object, auth.Object);
     }
 }

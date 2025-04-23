@@ -6,10 +6,10 @@ public interface IDatabaseObject<T>
 {
     public IEnumerable<T> ReadAll();
 
-    public T? Read(string id);
+    public Room_2D Read(string id);
 
-    public bool Write(T room2D);
-    
+    public bool Write(T room);
+
     public bool Delete(string id);
 
 
